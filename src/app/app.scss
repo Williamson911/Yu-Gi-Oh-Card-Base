@@ -1,0 +1,160 @@
+@use 'sass:math';
+
+:host {
+  display: block;
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+}
+
+// ============================================
+// Ambiance — scanlines + braises dorées
+// ============================================
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+
+  &__scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 3px,
+      rgba(255, 255, 255, 0.025) 3px,
+      rgba(255, 255, 255, 0.025) 4px
+    );
+    mix-blend-mode: overlay;
+  }
+
+  &__embers {
+    position: absolute;
+    inset: 0;
+  }
+
+  &__hieroglyphs {
+    position: absolute;
+    inset: 0;
+  }
+}
+
+// ============================================
+// Hiéroglyphes — symboles gravés en fond
+// ============================================
+@keyframes glyph-fade {
+  0%, 100% { opacity: var(--glyph-min, 0.05); }
+  50%      { opacity: var(--glyph-max, 0.14); }
+}
+
+@keyframes glyph-drift {
+  0%, 100% { transform: translate(0, 0) rotate(var(--glyph-rot, 0deg)); }
+  50%      { transform: translate(var(--glyph-dx, 8px), var(--glyph-dy, -6px)) rotate(var(--glyph-rot-end, 4deg)); }
+}
+
+.hieroglyph {
+  position: absolute;
+  font-family: 'Segoe UI Historic', 'Noto Sans Egyptian Hieroglyphs', 'Aegyptus', serif;
+  color: var(--gold);
+  text-shadow: 0 0 12px var(--gold-glow);
+  user-select: none;
+  pointer-events: none;
+  will-change: transform, opacity;
+  animation:
+    glyph-fade var(--glyph-fade-dur, 14s) ease-in-out infinite,
+    glyph-drift var(--glyph-drift-dur, 40s) ease-in-out infinite;
+  animation-delay: var(--glyph-delay, 0s);
+  --glyph-min: 0.04;
+  --glyph-max: 0.12;
+
+  // 12 hiéroglyphes positionnés et timés différemment
+  @for $n from 0 through 11 {
+    &:nth-child(#{$n + 1}) {
+      $col: ($n % 4) * 25 + 4;
+      $row: math.floor(math.div($n, 4)) * 33 + 5;
+      left: #{$col * 1%};
+      top: #{$row * 1%};
+      font-size: #{60 + ($n * 13) % 90}px;
+      --glyph-fade-dur: #{12 + ($n * 5) % 10}s;
+      --glyph-drift-dur: #{36 + ($n * 7) % 24}s;
+      --glyph-delay: #{($n * 1.7) % 8}s;
+      --glyph-dx: #{(($n * 11) % 30) - 15}px;
+      --glyph-dy: #{(($n * 13) % 24) - 12}px;
+      --glyph-rot: #{(($n * 17) % 10) - 5}deg;
+      --glyph-rot-end: #{(($n * 19) % 14) - 7}deg;
+      --glyph-min: #{0.03 + (($n * 3) % 4) * 0.01};
+      --glyph-max: #{0.08 + (($n * 5) % 5) * 0.015};
+    }
+  }
+}
+
+@keyframes ember-rise {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.7);
+    opacity: 0;
+  }
+  12% {
+    opacity: var(--ember-opacity, 0.7);
+  }
+  88% {
+    opacity: var(--ember-opacity, 0.7);
+  }
+  100% {
+    transform: translate3d(var(--ember-drift, 20px), -110vh, 0) scale(1.1);
+    opacity: 0;
+  }
+}
+
+.ember {
+  position: absolute;
+  bottom: -10px;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 220, 120, 0.95),
+    rgba(244, 200, 66, 0.6) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 6px rgba(244, 200, 66, 0.7);
+  animation: ember-rise var(--ember-dur, 14s) linear infinite;
+  animation-delay: var(--ember-delay, 0s);
+  --ember-opacity: 0.5;
+
+  // 22 braises avec positions / vitesses / dérives variées
+  @for $n from 0 through 21 {
+    &:nth-child(#{$n + 1}) {
+      left: #{($n * 61 + 9) % 100 * 1%};
+      --ember-dur: #{11 + ($n * 7) % 11}s;
+      --ember-delay: #{($n * 1.5) % 10}s;
+      --ember-drift: #{(($n * 19) % 70) - 35}px;
+      --ember-opacity: #{0.35 + (($n * 3) % 5) * 0.07};
+
+      @if $n % 7 == 0 {
+        width: 3px;
+        height: 3px;
+        box-shadow:
+          0 0 8px rgba(244, 200, 66, 0.85),
+          0 0 18px rgba(244, 200, 66, 0.4);
+      }
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ember,
+  .ambient__scanlines,
+  .hieroglyph {
+    animation: none;
+  }
+  .ember,
+  .ambient__scanlines {
+    opacity: 0;
+  }
+  .hieroglyph {
+    opacity: 0.06;
+  }
+}

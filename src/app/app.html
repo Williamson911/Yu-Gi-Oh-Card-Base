@@ -1,0 +1,15 @@
+<div class="ambient" aria-hidden="true">
+  <div class="ambient__hieroglyphs">
+    @for (g of hieroglyphs; track $index; let i = $index) {
+      <span class="hieroglyph" [attr.data-i]="i">{{ g }}</span>
+    }
+  </div>
+  <div class="ambient__scanlines"></div>
+  <div class="ambient__embers">
+    @for (i of embers; track i) {
+      <span class="ember" [style.--i]="i"></span>
+    }
+  </div>
+</div>
+
+<router-outlet />

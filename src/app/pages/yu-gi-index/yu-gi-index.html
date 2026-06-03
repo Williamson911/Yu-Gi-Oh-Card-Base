@@ -1,0 +1,92 @@
+<section class="yugi">
+  <header class="yugi__hero">
+    <p class="yugi__eyebrow">Trading Card Game</p>
+    <h1 class="yugi__title">
+      <img
+        class="yugi__logo"
+        src="https://img.yugioh-card.com/eu/wp-content/themes/yugioh/images/logo/Yugioh-EN-DE.svg"
+        alt="Yu-Gi-Oh!"
+        loading="eager" />
+    </h1>
+    <p class="yugi__subtitle">It's time to duel — parcours la base de cartes officielle.</p>
+  </header>
+
+  <app-yu-gi-filters
+    [applied]="filters()"
+    [language]="language()"
+    (apply)="onApplyFilters($event)"
+    (languageChange)="onLanguageChange($event)" />
+
+  <nav class="yugi__pagination" aria-label="Navigation des pages">
+    <button
+      class="yugi__nav-btn"
+      (click)="previous()"
+      [disabled]="currentPage === 0"
+      aria-label="Page précédente">
+      <span aria-hidden="true">◀</span> Précédent
+    </button>
+
+    <span class="yugi__page-indicator">
+      Page <strong>{{ currentPage + 1 }}</strong>
+      / {{ yugiResult()?.meta?.total_pages ?? '—' }}
+    </span>
+
+    <button
+      class="yugi__nav-btn"
+      (click)="next()"
+      [disabled]="(yugiResult()?.meta?.total_pages ?? 0) === 0
+                  || currentPage + 1 >= (yugiResult()?.meta?.total_pages ?? 0)"
+      aria-label="Page suivante">
+      Suivant <span aria-hidden="true">▶</span>
+    </button>
+  </nav>
+
+  <ul class="yugi__grid" [class.is-loading]="loading()">
+    @for (c of yugiResult()?.data; track c.id) {
+      <li
+        class="yugi-card"
+        appHoloCard
+        [style.--frame-bg]="frameStyle(c).background"
+        [style.--frame-border]="frameStyle(c).borderColor"
+        [style.--frame-text]="frameStyle(c).textColor"
+        [class.yugi-card--selected]="selectedCard()?.id === c.id"
+        [class.yugi-card--rare]="isRare(c)"
+        (click)="select(c)"
+        (keydown.enter)="select(c)"
+        (keydown.space)="select(c); $event.preventDefault()"
+        tabindex="0"
+        role="button"
+        [attr.aria-label]="'Voir les détails de ' + c.name">
+        <div class="yugi-card__frame">
+          <img
+            class="yugi-card__image"
+            [src]="c.card_images[0].image_url_small"
+            [alt]="c.name"
+            loading="lazy" />
+          @if (cardIcon(c) !== 'none') {
+            <span class="yugi-card__icon" aria-hidden="true">
+              <app-card-icon [icon]="cardIcon(c)" [size]="22" [label]="c.race" />
+            </span>
+          }
+        </div>
+        <h3 class="yugi-card__name">{{ c.name }}</h3>
+        <p class="yugi-card__type">
+          {{ frameStyle(c).label }}@if (!isSpellTrap(c)) { · {{ raceLabel(c) }} }
+        </p>
+      </li>
+    } @empty {
+      <li class="yugi__empty">
+        @if (loading()) {
+          Invocation en cours…
+        } @else {
+          Aucune carte ne correspond aux filtres.
+        }
+      </li>
+    }
+  </ul>
+</section>
+
+<app-yu-gi-card-detail
+  [card]="selectedCard()"
+  [language]="language()"
+  (close)="closeDetail()" />

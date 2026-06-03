@@ -1,0 +1,115 @@
+@if (card(); as c) {
+  <div class="detail-overlay" (click)="onClose()" aria-hidden="true"></div>
+
+  <aside class="detail-panel" role="dialog" aria-modal="true" [attr.aria-label]="c.name">
+    <span class="detail-panel__scan" aria-hidden="true"></span>
+    <button
+      type="button"
+      class="detail-panel__close"
+      (click)="onClose()"
+      aria-label="Fermer">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <header
+      class="detail-panel__header"
+      [style.background]="frame()?.background"
+      [style.color]="frame()?.textColor">
+      <div class="detail-panel__category">
+        <app-card-icon
+          [icon]="icon()"
+          [size]="22"
+          [label]="c.race" />
+        <span>{{ frame()?.label }}</span>
+      </div>
+      <h2 class="detail-panel__name">{{ c.name }}</h2>
+    </header>
+
+    <div class="detail-panel__body">
+      <figure class="detail-panel__image-wrap">
+        <img
+          class="detail-panel__image"
+          [src]="c.card_images[0].image_url"
+          [alt]="c.name"
+          loading="lazy" />
+      </figure>
+
+      @if (isMonster()) {
+        <dl class="detail-panel__stats">
+          <div class="detail-panel__stat">
+            <dt>Type</dt>
+            <dd>{{ raceLabel() }}</dd>
+          </div>
+          @if (c.attribute) {
+            <div class="detail-panel__stat">
+              <dt>Attribut</dt>
+              <dd>{{ attributeLabel() }}</dd>
+            </div>
+          }
+          @if (c.linkval != null) {
+            <div class="detail-panel__stat">
+              <dt>Lien</dt>
+              <dd>{{ c.linkval }}</dd>
+            </div>
+          } @else if (c.level != null) {
+            <div class="detail-panel__stat">
+              <dt>Niveau</dt>
+              <dd>{{ c.level }}</dd>
+            </div>
+          }
+          @if (c.atk != null) {
+            <div class="detail-panel__stat">
+              <dt>ATK</dt>
+              <dd>{{ c.atk }}</dd>
+            </div>
+          }
+          @if (c.def != null) {
+            <div class="detail-panel__stat">
+              <dt>DEF</dt>
+              <dd>{{ c.def }}</dd>
+            </div>
+          }
+          @if (isPendule() && c.scale != null) {
+            <div class="detail-panel__stat">
+              <dt>Échelle</dt>
+              <dd>{{ c.scale }}</dd>
+            </div>
+          }
+        </dl>
+      } @else {
+        <dl class="detail-panel__stats">
+          <div class="detail-panel__stat">
+            <dt>Sous-catégorie</dt>
+            <dd>{{ subtypeLabel() }}</dd>
+          </div>
+        </dl>
+      }
+
+      @if (c.archetype) {
+        <p class="detail-panel__archetype">
+          <span class="detail-panel__archetype-label">Archétype</span>
+          {{ c.archetype }}
+        </p>
+      }
+
+      @if (isPendule() && c.pend_desc) {
+        <section class="detail-panel__section">
+          <h3>Effet Pendule</h3>
+          <p>{{ c.pend_desc }}</p>
+        </section>
+        <section class="detail-panel__section">
+          <h3>Effet Monstre</h3>
+          <p>{{ c.monster_desc || c.desc }}</p>
+        </section>
+      } @else {
+        <section class="detail-panel__section">
+          <h3>Description</h3>
+          <p>{{ c.desc }}</p>
+        </section>
+      }
+    </div>
+  </aside>
+}

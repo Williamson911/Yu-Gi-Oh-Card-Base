@@ -1,0 +1,211 @@
+<div class="filters">
+  <div class="filters__bar">
+    <div class="filters__search">
+      <svg class="filters__search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <circle cx="10" cy="10" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="m15 15 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <input
+        type="search"
+        class="filters__search-input"
+        placeholder="Rechercher une carte…"
+        [ngModel]="draft().fname"
+        (ngModelChange)="onSearchInput($event)"
+        (keydown.enter)="onSearchEnter()"
+        aria-label="Recherche par nom" />
+    </div>
+
+    <button
+      type="button"
+      class="filters__btn filters__btn--ghost filters__btn--toggle"
+      [class.is-open]="panelOpen()"
+      (click)="togglePanel()"
+      aria-label="Ouvrir les filtres"
+      [attr.aria-expanded]="panelOpen()">
+      <svg class="filters__toggle-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+        <path d="M3 5h18M6 12h12M10 19h4" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>Filtres</span>
+      @if (activeFilterCount() > 0) {
+        <span class="filters__badge">{{ activeFilterCount() }}</span>
+      }
+    </button>
+
+    <label class="filters__sort">
+      <span class="filters__sort-label">Tri</span>
+      <select
+        class="filters__select"
+        [ngModel]="draft().sort"
+        (ngModelChange)="onSortChange($event)">
+        @for (opt of sortOptions; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+    </label>
+
+    <div
+      class="filters__lang"
+      role="group"
+      aria-label="Langue du catalogue"
+      [attr.data-lang]="language()">
+      <span class="filters__lang-indicator" aria-hidden="true"></span>
+      <button
+        type="button"
+        class="filters__lang-btn"
+        [class.is-active]="language() === 'fr'"
+        (click)="setLanguage('fr')"
+        [attr.aria-pressed]="language() === 'fr'">
+        FR
+      </button>
+      <button
+        type="button"
+        class="filters__lang-btn"
+        [class.is-active]="language() === 'en'"
+        (click)="setLanguage('en')"
+        [attr.aria-pressed]="language() === 'en'">
+        EN
+      </button>
+    </div>
+  </div>
+
+  @if (panelOpen()) {
+    <div class="filters__panel">
+      <div class="filters__grid">
+        <label class="filters__field">
+          <span>Catégorie</span>
+          <select
+            class="filters__select"
+            [ngModel]="draft().category"
+            (ngModelChange)="onCategoryChange($event)">
+            @for (opt of categories; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </label>
+
+        @if (subtypeOptions().length > 0) {
+          <label class="filters__field">
+            <span>Sous-catégorie</span>
+            <select
+              class="filters__select"
+              [ngModel]="draft().subType"
+              (ngModelChange)="updateField('subType', $event)">
+              @for (opt of subtypeOptions(); track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </label>
+        }
+
+        @if (category() === 'monster') {
+          <label class="filters__field">
+            <span>Type de monstre</span>
+            <select
+              class="filters__select"
+              [ngModel]="draft().race"
+              (ngModelChange)="updateField('race', $event)">
+              @for (opt of monsterRaces; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="filters__field">
+            <span>Attribut</span>
+            <select
+              class="filters__select"
+              [ngModel]="draft().attribute"
+              (ngModelChange)="updateField('attribute', $event)">
+              @for (opt of monsterAttributes; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </label>
+
+          <div class="filters__field filters__field--range">
+            <span>Niveau</span>
+            <div class="filters__range">
+              <select
+                class="filters__select filters__select--small"
+                [ngModel]="draft().levelMin ?? ''"
+                (ngModelChange)="updateNumber('levelMin', $event)"
+                aria-label="Niveau minimum">
+                @for (opt of levels; track opt.value) {
+                  <option [value]="opt.value">{{ opt.label }}</option>
+                }
+              </select>
+              <span class="filters__range-sep">→</span>
+              <select
+                class="filters__select filters__select--small"
+                [ngModel]="draft().levelMax ?? ''"
+                (ngModelChange)="updateNumber('levelMax', $event)"
+                aria-label="Niveau maximum">
+                @for (opt of levels; track opt.value) {
+                  <option [value]="opt.value">{{ opt.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="filters__field filters__field--range">
+            <span>ATK</span>
+            <div class="filters__range">
+              <input
+                type="number"
+                class="filters__input filters__input--small"
+                placeholder="min"
+                min="0"
+                [ngModel]="draft().atkMin"
+                (ngModelChange)="updateNumber('atkMin', $event)" />
+              <span class="filters__range-sep">→</span>
+              <input
+                type="number"
+                class="filters__input filters__input--small"
+                placeholder="max"
+                min="0"
+                [ngModel]="draft().atkMax"
+                (ngModelChange)="updateNumber('atkMax', $event)" />
+            </div>
+          </div>
+
+          <div class="filters__field filters__field--range">
+            <span>DEF</span>
+            <div class="filters__range">
+              <input
+                type="number"
+                class="filters__input filters__input--small"
+                placeholder="min"
+                min="0"
+                [ngModel]="draft().defMin"
+                (ngModelChange)="updateNumber('defMin', $event)" />
+              <span class="filters__range-sep">→</span>
+              <input
+                type="number"
+                class="filters__input filters__input--small"
+                placeholder="max"
+                min="0"
+                [ngModel]="draft().defMax"
+                (ngModelChange)="updateNumber('defMax', $event)" />
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="filters__actions">
+        <button
+          type="button"
+          class="filters__btn filters__btn--ghost"
+          (click)="resetFilters()">
+          Réinitialiser
+        </button>
+        <button
+          type="button"
+          class="filters__btn filters__btn--primary"
+          (click)="applyFilters()">
+          Appliquer
+        </button>
+      </div>
+    </div>
+  }
+</div>

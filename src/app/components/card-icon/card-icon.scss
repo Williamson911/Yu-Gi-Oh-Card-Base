@@ -1,0 +1,12 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.card-icon {
+  display: block;
+  color: inherit;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.6));
+}
