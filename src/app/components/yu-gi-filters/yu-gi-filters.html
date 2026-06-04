@@ -84,6 +84,39 @@
           </select>
         </label>
 
+        <div class="filters__field filters__field--full">
+          <div class="filters__set-header">
+            <span>Sets ({{ (draft().sets ?? []).length }} sélectionné{{ (draft().sets ?? []).length > 1 ? 's' : '' }})</span>
+            @if ((draft().sets ?? []).length > 0) {
+              <button type="button" class="filters__set-clear" (click)="clearSets()">
+                Tout désélectionner
+              </button>
+            }
+          </div>
+          <input
+            type="search"
+            class="filters__input filters__input--full"
+            placeholder="Filtrer les sets…"
+            [ngModel]="setSearch()"
+            (ngModelChange)="setSearch.set($event)" />
+          <ul class="filters__set-list" role="listbox" aria-label="Choix des sets">
+            @for (s of filteredSets(); track s.set_code) {
+              <li>
+                <label class="filters__set-item">
+                  <input
+                    type="checkbox"
+                    [checked]="isSetSelected(s.set_name)"
+                    (change)="toggleSet(s.set_name, $any($event.target).checked)" />
+                  <span class="filters__set-code">{{ s.set_code }}</span>
+                  <span class="filters__set-name">{{ s.set_name }}</span>
+                </label>
+              </li>
+            } @empty {
+              <li class="filters__set-empty">Aucun set trouvé.</li>
+            }
+          </ul>
+        </div>
+
         @if (subtypeOptions().length > 0) {
           <label class="filters__field">
             <span>Sous-catégorie</span>

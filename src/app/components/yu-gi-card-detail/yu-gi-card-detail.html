@@ -79,7 +79,7 @@
             </div>
           }
         </dl>
-      } @else {
+      } @else if (!isSkill()) {
         <dl class="detail-panel__stats">
           <div class="detail-panel__stat">
             <dt>Sous-catégorie</dt>
@@ -109,6 +109,26 @@
           <h3>Description</h3>
           <p>{{ c.desc }}</p>
         </section>
+      }
+      @if (mode() === 'deckbuilder' && deck()) {
+        <div class="detail-panel__deck-actions">
+          <button
+            type="button"
+            class="detail-panel__deck-btn"
+            [disabled]="!mainAddCheck().allowed"
+            [title]="mainAddCheck().reason ?? ''"
+            (click)="onAdd(mainSection())">
+            {{ mainButtonLabel() }}
+          </button>
+          <button
+            type="button"
+            class="detail-panel__deck-btn detail-panel__deck-btn--side"
+            [disabled]="!sideAddCheck().allowed"
+            [title]="sideAddCheck().reason ?? ''"
+            (click)="onAdd('side')">
+            + Side Deck
+          </button>
+        </div>
       }
     </div>
   </aside>

@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   HostListener,
+  inject,
   input,
   output,
 } from '@angular/core';
@@ -11,6 +12,7 @@ import {
   getFrameStyle,
   getSpellTrapIcon,
   isPendulum,
+  isSkillCard,
   isSpellOrTrap,
 } from '../../utils/card-style';
 import { CardIcon } from '../card-icon/card-icon';
@@ -20,6 +22,10 @@ import {
   translateRace,
   translateSpellTrapSubtype,
 } from '../../utils/filter-translations';
+import { Deck, DeckSectionId } from '../../models/deck';
+import { canAddCard } from '../../utils/deck-validation';
+import { defaultSectionFor } from '../../utils/deck-rules';
+import { BanlistService } from '../../services/banlist-service';
 
 @Component({
   selector: 'app-yu-gi-card-detail',
@@ -31,7 +37,12 @@ import {
 export class YuGiCardDetail {
   card = input<Daum | null>(null);
   language = input<Language>('fr');
+  mode = input<'view' | 'deckbuilder'>('view');
+  deck = input<Deck | null>(null);
   close = output<void>();
+  addToDeck = output<DeckSectionId>();
+
+  private readonly _banlist = inject(BanlistService);
 
   protected raceLabel = computed(() => {
     const c = this.card();
@@ -60,12 +71,40 @@ export class YuGiCardDetail {
 
   protected isMonster = computed(() => {
     const c = this.card();
-    return c ? !isSpellOrTrap(c.type) : false;
+    return c ? !isSpellOrTrap(c.type) && !isSkillCard(c.type) : false;
+  });
+
+  protected isSkill = computed(() => {
+    const c = this.card();
+    return c ? isSkillCard(c.type) : false;
   });
 
   protected isPendule = computed(() => {
     const c = this.card();
     return c ? isPendulum(c.frameType) : false;
+  });
+
+  protected mainSection = computed<DeckSectionId>(() => {
+    const c = this.card();
+    return c ? defaultSectionFor(c) : 'main';
+  });
+
+  protected mainButtonLabel = computed(() =>
+    this.mainSection() === 'extra' ? '+ Extra Deck' : '+ Main Deck',
+  );
+
+  protected mainAddCheck = computed(() => {
+    const c = this.card();
+    const d = this.deck();
+    if (!c || !d) return { allowed: false, reason: '' };
+    return canAddCard(d, this.mainSection(), c, this._banlist);
+  });
+
+  protected sideAddCheck = computed(() => {
+    const c = this.card();
+    const d = this.deck();
+    if (!c || !d) return { allowed: false, reason: '' };
+    return canAddCard(d, 'side', c, this._banlist);
   });
 
   @HostListener('document:keydown.escape')
@@ -75,5 +114,9 @@ export class YuGiCardDetail {
 
   protected onClose() {
     this.close.emit();
+  }
+
+  protected onAdd(section: DeckSectionId) {
+    this.addToDeck.emit(section);
   }
 }

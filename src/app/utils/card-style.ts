@@ -25,6 +25,7 @@ const COLORS = {
   pendulum: '#3fbab0',
   spell: '#1e9b6e',
   trap: '#bd446a',
+  skill: '#0077B9',
 } as const;
 
 const LABELS: Record<string, string> = {
@@ -37,6 +38,7 @@ const LABELS: Record<string, string> = {
   link: 'Lien',
   spell: 'Magie',
   trap: 'Piège',
+  skill: 'Compétence',
 };
 
 export function getFrameStyle(frameType: string): FrameStyle {
@@ -110,4 +112,8 @@ export function isSpellOrTrap(type: string): boolean {
 
 export function isPendulum(frameType: string): boolean {
   return (frameType || '').toLowerCase().endsWith('_pendulum');
+}
+
+export function isSkillCard(type: string): boolean {
+  return (type || '').toLowerCase().includes('skill');
 }

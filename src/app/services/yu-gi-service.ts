@@ -17,6 +17,7 @@ export interface CardQuery {
   defMin?: number | null;
   defMax?: number | null;
   sort?: string;
+  sets?: string[];
 }
 
 const EMPTY_RESULT: YuGiResult = {
@@ -82,6 +83,10 @@ export class YuGiService {
     const def = rangeParam(query.defMin, query.defMax);
     if (def) params = params.set('def', def);
 
+    if (query.sets && query.sets.length > 0) {
+      params = params.set('cardset', query.sets.join(','));
+    }
+
     if (query.sort) params = params.set('sort', query.sort);
 
     return this._http.get<YuGiResult>(this.apiUrl, { params }).pipe(
@@ -89,6 +94,15 @@ export class YuGiService {
         query.sort ? res : { ...res, data: [...res.data].sort(compareBySet) },
       ),
       catchError(() => of(EMPTY_RESULT)),
+    );
+  }
+
+  getCardById(id: number, language: Language = 'fr'): Observable<Daum | null> {
+    let params = new HttpParams().set('id', id);
+    if (language === 'fr') params = params.set('language', 'fr');
+    return this._http.get<YuGiResult>(this.apiUrl, { params }).pipe(
+      map((res) => res.data?.[0] ?? null),
+      catchError(() => of(null)),
     );
   }
 

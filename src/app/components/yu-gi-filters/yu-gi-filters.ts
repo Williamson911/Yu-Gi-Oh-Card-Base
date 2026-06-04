@@ -2,11 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   output,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { SetService } from '../../services/set-service';
 import { CardQuery } from '../../services/yu-gi-service';
 import {
   Category,
@@ -34,6 +36,7 @@ const EMPTY_QUERY: CardQuery = {
   defMin: null,
   defMax: null,
   sort: '',
+  sets: [],
 };
 
 @Component({
@@ -48,6 +51,19 @@ export class YuGiFilters {
   language = input<Language>('fr');
   apply = output<CardQuery>();
   languageChange = output<Language>();
+
+  private readonly _setService = inject(SetService);
+  protected readonly sets = this._setService.sets;
+  protected readonly setSearch = signal('');
+  protected readonly filteredSets = computed(() => {
+    const term = this.setSearch().trim().toLowerCase();
+    const all = this.sets();
+    if (!term) return all;
+    return all.filter((s) =>
+      s.set_name.toLowerCase().includes(term) ||
+      s.set_code.toLowerCase().includes(term),
+    );
+  });
 
   protected readonly categories = CATEGORIES;
   protected readonly monsterSubtypes = MONSTER_SUBTYPES;
@@ -84,6 +100,7 @@ export class YuGiFilters {
     if (q.atkMin != null || q.atkMax != null) n++;
     if (q.defMin != null || q.defMax != null) n++;
     if (q.sort) n++;
+    if (q.sets && q.sets.length > 0) n++;
     return n;
   });
 
@@ -109,6 +126,24 @@ export class YuGiFilters {
 
   protected updateField<K extends keyof CardQuery>(key: K, value: CardQuery[K]) {
     this.draft.update((q) => ({ ...q, [key]: value }));
+  }
+
+  protected isSetSelected(setName: string): boolean {
+    return (this.draft().sets ?? []).includes(setName);
+  }
+
+  protected toggleSet(setName: string, checked: boolean): void {
+    this.draft.update((q) => {
+      const current = q.sets ?? [];
+      const next = checked
+        ? [...current.filter((s) => s !== setName), setName]
+        : current.filter((s) => s !== setName);
+      return { ...q, sets: next };
+    });
+  }
+
+  protected clearSets(): void {
+    this.draft.update((q) => ({ ...q, sets: [] }));
   }
 
   protected updateNumber(key: keyof CardQuery, raw: string) {

@@ -2,19 +2,14 @@ import { Component, inject, signal, WritableSignal } from '@angular/core';
 import { CardQuery, YuGiService } from '../../services/yu-gi-service';
 import { Daum, YuGiResult } from '../../models/yu-gi-result';
 import { YuGiCardDetail } from '../../components/yu-gi-card-detail/yu-gi-card-detail';
-import { CardIcon } from '../../components/card-icon/card-icon';
 import { YuGiFilters } from '../../components/yu-gi-filters/yu-gi-filters';
-import {
-  getFrameStyle,
-  getSpellTrapIcon,
-  isSpellOrTrap,
-} from '../../utils/card-style';
-import { Language, translateRace } from '../../utils/filter-translations';
-import { HoloCard } from '../../directives/holo-card';
+import { AppHeader } from '../../components/app-header/app-header';
+import { CardGrid } from '../../components/card-grid/card-grid';
+import { Language } from '../../utils/filter-translations';
 
 @Component({
   selector: 'app-yu-gi-index',
-  imports: [YuGiCardDetail, CardIcon, YuGiFilters, HoloCard],
+  imports: [YuGiCardDetail, YuGiFilters, AppHeader, CardGrid],
   templateUrl: './yu-gi-index.html',
   styleUrl: './yu-gi-index.scss',
 })
@@ -82,29 +77,4 @@ export class YuGiIndex {
     this.selectedCard.set(null);
   }
 
-  frameStyle(card: Daum) {
-    return getFrameStyle(card.frameType);
-  }
-
-  cardIcon(card: Daum) {
-    return getSpellTrapIcon(card.race, card.type);
-  }
-
-  isSpellTrap(card: Daum) {
-    return isSpellOrTrap(card.type);
-  }
-
-  raceLabel(card: Daum) {
-    return translateRace(card.race, this.language());
-  }
-
-  isRare(card: Daum): boolean {
-    const ft = (card.frameType || '').toLowerCase();
-    return (
-      ft.startsWith('xyz') ||
-      ft.startsWith('synchro') ||
-      ft.includes('pendulum') ||
-      ft.startsWith('link')
-    );
-  }
 }
