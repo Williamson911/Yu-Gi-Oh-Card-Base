@@ -1,0 +1,80 @@
+<app-header />
+
+<div class="deck-builder">
+  <section class="deck-builder__left">
+    <app-yu-gi-filters
+      [applied]="filters()"
+      [language]="language()"
+      (apply)="onApplyFilters($event)"
+      (languageChange)="onLanguageChange($event)" />
+
+    <nav class="deck-builder__pagination" aria-label="Navigation des pages">
+      <button
+        class="deck-builder__nav-btn"
+        (click)="previous()"
+        [disabled]="currentPage === 0">
+        ◀ Précédent
+      </button>
+      <span class="deck-builder__page">
+        Page <strong>{{ currentPage + 1 }}</strong>
+        / {{ yugiResult()?.meta?.total_pages ?? '—' }}
+      </span>
+      <button
+        class="deck-builder__nav-btn"
+        (click)="next()"
+        [disabled]="(yugiResult()?.meta?.total_pages ?? 0) === 0
+                    || currentPage + 1 >= (yugiResult()?.meta?.total_pages ?? 0)">
+        Suivant ▶
+      </button>
+    </nav>
+
+    <app-card-grid
+      [cards]="yugiResult()?.data ?? []"
+      [language]="language()"
+      [loading]="loading()"
+      [selectedId]="selectedCard()?.id ?? null"
+      [quickControls]="true"
+      [deck]="{
+        id: draft().linkedDeckId ?? 'draft',
+        ownerId: 'me',
+        name: draft().name,
+        main: draft().main,
+        extra: draft().extra,
+        side: draft().side,
+        createdAt: 0,
+        updatedAt: 0
+      }"
+      [targetSection]="activeSection()"
+      (cardClick)="select($event)"
+      (quickAdd)="onQuickAdd($event)"
+      (quickRemove)="onQuickRemove($event)"
+      (quickMax)="onQuickMax($event)" />
+  </section>
+
+  <app-deck-panel
+    class="deck-builder__right"
+    [draft]="draft()"
+    [activeSection]="activeSection()"
+    (nameChange)="onNameChange($event)"
+    (saveRequest)="onSave()"
+    (newRequest)="onNew()"
+    (sectionSelect)="onSectionSelect($event)"
+    (removeCard)="onRemoveFromDeck($event)" />
+</div>
+
+<app-yu-gi-card-detail
+  [card]="selectedCard()"
+  [language]="language()"
+  [mode]="'deckbuilder'"
+  [deck]="{
+    id: draft().linkedDeckId ?? 'draft',
+    ownerId: 'me',
+    name: draft().name,
+    main: draft().main,
+    extra: draft().extra,
+    side: draft().side,
+    createdAt: 0,
+    updatedAt: 0
+  }"
+  (close)="closeDetail()"
+  (addToDeck)="onAddToDeck($event)" />

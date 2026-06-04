@@ -1,0 +1,81 @@
+<ul class="card-grid" [class.is-loading]="loading()">
+  @for (c of cards(); track c.id) {
+    <li
+      class="card-grid__item yugi-card"
+      appHoloCard
+      [style.--frame-bg]="frameStyle(c).background"
+      [style.--frame-border]="frameStyle(c).borderColor"
+      [style.--frame-text]="frameStyle(c).textColor"
+      [class.yugi-card--selected]="selectedId() === c.id"
+      [class.yugi-card--rare]="isRare(c)"
+      (click)="onSelect(c)"
+      (keydown.enter)="onSelect(c)"
+      (keydown.space)="onSelect(c); $event.preventDefault()"
+      tabindex="0"
+      role="button"
+      [attr.aria-label]="'Voir les détails de ' + c.name">
+      <div class="yugi-card__frame">
+        <img
+          class="yugi-card__image"
+          [src]="c.card_images[0].image_url_small"
+          [alt]="c.name"
+          loading="lazy" />
+        @if (cardIcon(c) !== 'none') {
+          <span class="yugi-card__icon" aria-hidden="true">
+            <app-card-icon [icon]="cardIcon(c)" [size]="22" [label]="c.race" />
+          </span>
+        }
+        @if (banStatus(c); as s) {
+          <span [class]="banClass(s)" [attr.aria-label]="'Statut: ' + banLabel(s)">
+            {{ banLabel(s) }}
+          </span>
+        }
+        @if (deck() && countOf(c) > 0) {
+          <span class="card-grid__count-badge"
+                [attr.aria-label]="countOf(c) + ' exemplaire' + (countOf(c) > 1 ? 's' : '') + ' dans le deck'">
+            ×{{ countOf(c) }}
+          </span>
+        }
+      </div>
+      <h3 class="yugi-card__name">{{ c.name }}</h3>
+      <p class="yugi-card__type">
+        {{ frameStyle(c).label }}@if (!isSpellTrap(c)) { · {{ raceLabel(c) }} }
+      </p>
+      @if (quickControls()) {
+        <div class="card-grid__controls" (click)="$event.stopPropagation()"
+                                         (keydown.enter)="$event.stopPropagation()"
+                                         (keydown.space)="$event.stopPropagation()">
+          <button
+            type="button"
+            class="card-grid__ctrl"
+            [disabled]="countOf(c) === 0"
+            aria-label="Retirer une copie"
+            (click)="onQuickRemove(c, $event)">−</button>
+          <span class="card-grid__count" [attr.aria-label]="countOf(c) + ' copies dans le deck'">
+            {{ countOf(c) }}
+          </span>
+          <button
+            type="button"
+            class="card-grid__ctrl"
+            [disabled]="!canAddOne(c)"
+            aria-label="Ajouter une copie"
+            (click)="onQuickAdd(c, $event)">+</button>
+          <button
+            type="button"
+            class="card-grid__ctrl card-grid__ctrl--max"
+            [disabled]="countOf(c) >= maxCopies(c)"
+            [attr.aria-label]="'Compléter à ' + maxCopies(c) + ' exemplaire' + (maxCopies(c) > 1 ? 's' : '')"
+            (click)="onQuickMax(c, $event)">Max</button>
+        </div>
+      }
+    </li>
+  } @empty {
+    <li class="card-grid__empty">
+      @if (loading()) {
+        Invocation en cours…
+      } @else {
+        Aucune carte ne correspond aux filtres.
+      }
+    </li>
+  }
+</ul>

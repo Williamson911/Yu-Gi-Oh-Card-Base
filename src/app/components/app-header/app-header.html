@@ -1,0 +1,39 @@
+<header class="appheader">
+  <div class="appheader__brand">
+    <img
+      class="appheader__logo"
+      src="https://img.yugioh-card.com/eu/wp-content/themes/yugioh/images/logo/Yugioh-EN-DE.svg"
+      alt="Yu-Gi-Oh!"
+      loading="eager" />
+  </div>
+  <nav class="appheader__nav" aria-label="Navigation principale">
+    <a
+      class="appheader__link"
+      routerLink="/"
+      routerLinkActive="is-active"
+      [routerLinkActiveOptions]="{ exact: true }">
+      Catalogue
+    </a>
+
+    @if (session(); as s) {
+      <a class="appheader__link" routerLink="/deck-builder" routerLinkActive="is-active">
+        Deck Builder
+      </a>
+      <a class="appheader__link" routerLink="/decks" routerLinkActive="is-active">
+        Mes decks
+      </a>
+      <span class="appheader__sep" aria-hidden="true">·</span>
+      <span class="appheader__user">Bonjour {{ s.username }}</span>
+      <button type="button" class="appheader__logout" (click)="logout()">
+        Déconnexion
+      </button>
+    } @else {
+      <a class="appheader__link" routerLink="/login" routerLinkActive="is-active">
+        Connexion
+      </a>
+      <a class="appheader__link" routerLink="/register" routerLinkActive="is-active">
+        Inscription
+      </a>
+    }
+  </nav>
+</header>

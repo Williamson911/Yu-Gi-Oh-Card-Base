@@ -1,0 +1,92 @@
+<app-header />
+
+<main class="auth">
+  <form class="auth__card" [formGroup]="registerForm" (ngSubmit)="submit()" autocomplete="on">
+    <h1 class="auth__title">Inscription</h1>
+    <p class="auth__subtitle">Crée ton compte de duelliste.</p>
+
+    <label class="auth__field">
+      <span>Username</span>
+      <input
+        type="text"
+        formControlName="username"
+        autocomplete="username"
+        required />
+      @if (registerForm.get('username'); as ctrl) {
+        @if (ctrl.touched && ctrl.errors?.['required']) {
+          <small class="auth__field-error">Username requis.</small>
+        } @else if (ctrl.touched && (ctrl.errors?.['minlength'] || ctrl.errors?.['maxlength'])) {
+          <small class="auth__field-error">Le username doit faire entre 3 et 20 caractères.</small>
+        } @else if (ctrl.touched && ctrl.errors?.['pattern']) {
+          <small class="auth__field-error">Caractères autorisés : lettres, chiffres, _ et -.</small>
+        } @else if (ctrl.touched && ctrl.errors?.['taken']) {
+          <small class="auth__field-error">Ce username est déjà pris.</small>
+        }
+      }
+    </label>
+
+    <label class="auth__field">
+      <span>Email</span>
+      <input
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        required />
+      @if (registerForm.get('email'); as ctrl) {
+        @if (ctrl.touched && ctrl.errors?.['required']) {
+          <small class="auth__field-error">Email requis.</small>
+        } @else if (ctrl.touched && ctrl.errors?.['email']) {
+          <small class="auth__field-error">Email invalide.</small>
+        } @else if (ctrl.touched && ctrl.errors?.['taken']) {
+          <small class="auth__field-error">Cet email est déjà utilisé.</small>
+        }
+      }
+    </label>
+
+    <label class="auth__field">
+      <span>Mot de passe</span>
+      <input
+        type="password"
+        formControlName="password"
+        autocomplete="new-password"
+        required />
+      @if (registerForm.get('password'); as ctrl) {
+        @if (ctrl.touched && ctrl.errors?.['required']) {
+          <small class="auth__field-error">Mot de passe requis.</small>
+        } @else if (ctrl.touched && ctrl.errors?.['minlength']) {
+          <small class="auth__field-error">Mot de passe ≥ 8 caractères.</small>
+        }
+      }
+    </label>
+
+    <label class="auth__field">
+      <span>Confirmer le mot de passe</span>
+      <input
+        type="password"
+        formControlName="passwordConfirm"
+        autocomplete="new-password"
+        required />
+      @if (registerForm.get('passwordConfirm'); as ctrl) {
+        @if (ctrl.touched && ctrl.errors?.['required']) {
+          <small class="auth__field-error">Confirmation requise.</small>
+        }
+      }
+      @if (registerForm.touched && registerForm.errors?.['passwordsMismatch']
+            && !registerForm.get('passwordConfirm')?.errors?.['required']) {
+        <small class="auth__field-error">Les mots de passe ne correspondent pas.</small>
+      }
+    </label>
+
+    @if (formError()) {
+      <p class="auth__error" role="alert">{{ formError() }}</p>
+    }
+
+    <button type="submit" class="auth__submit" [disabled]="busy()">
+      @if (busy()) { Création… } @else { Créer mon compte }
+    </button>
+
+    <p class="auth__switch">
+      Déjà inscrit ? <a routerLink="/login">Se connecter</a>
+    </p>
+  </form>
+</main>

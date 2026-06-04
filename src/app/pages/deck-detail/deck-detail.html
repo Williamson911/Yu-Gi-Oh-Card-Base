@@ -1,0 +1,80 @@
+<app-header />
+
+@if (deck(); as d) {
+  <main class="deck-detail">
+    <header class="deck-detail__head">
+      <div>
+        <p class="deck-detail__eyebrow">Aperçu du deck</p>
+        <h1 class="deck-detail__title">{{ d.name }}</h1>
+        <p class="deck-detail__subtitle">
+          {{ totalCards() }} cartes au total ·
+          @if (isValid()) {
+            <span class="deck-detail__valid">✓ Deck valide</span>
+          } @else {
+            <span class="deck-detail__invalid">⛔ {{ issues().length }} problème(s)</span>
+          }
+        </p>
+      </div>
+
+      <div class="deck-detail__actions">
+        <button type="button" class="deck-detail__btn deck-detail__btn--primary" (click)="edit()">
+          Éditer
+        </button>
+        <button type="button" class="deck-detail__btn" (click)="duplicate()">
+          Dupliquer
+        </button>
+        <button type="button" class="deck-detail__btn" (click)="exportPdf()">
+          Export PDF
+        </button>
+        <button type="button" class="deck-detail__btn deck-detail__btn--danger" (click)="remove()">
+          Supprimer
+        </button>
+      </div>
+    </header>
+
+    @if (issues().length > 0) {
+      <ul class="deck-detail__issues">
+        @for (i of issues(); track $index) {
+          <li
+            class="deck-detail__issue"
+            [class.deck-detail__issue--error]="i.severity === 'error'">
+            {{ i.severity === 'error' ? '⛔' : '⚠' }} {{ i.message }}
+          </li>
+        }
+      </ul>
+    }
+
+    <div class="deck-detail__body">
+      <app-deck-section
+        section="main"
+        title="Main Deck"
+        mode="preview"
+        [cards]="d.main"
+        [min]="40"
+        [max]="60"
+        (cardSelect)="onCardSelect($event)" />
+
+      <app-deck-section
+        section="extra"
+        title="Extra Deck"
+        mode="preview"
+        [cards]="d.extra"
+        [max]="15"
+        (cardSelect)="onCardSelect($event)" />
+
+      <app-deck-section
+        section="side"
+        title="Side Deck"
+        mode="preview"
+        [cards]="d.side"
+        [max]="15"
+        (cardSelect)="onCardSelect($event)" />
+    </div>
+  </main>
+
+  <app-yu-gi-card-detail
+    [card]="selectedCard()"
+    [language]="'fr'"
+    [mode]="'view'"
+    (close)="closeDetail()" />
+}

@@ -1,0 +1,8 @@
+@if (current(); as t) {
+  <div class="toast" [class.toast--success]="t.level === 'success'"
+                     [class.toast--error]="t.level === 'error'"
+                     role="status"
+                     aria-live="polite">
+    {{ t.message }}
+  </div>
+}

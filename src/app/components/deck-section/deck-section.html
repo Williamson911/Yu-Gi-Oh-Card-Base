@@ -1,0 +1,73 @@
+<section class="deck-section"
+  [class.deck-section--active]="active()"
+  [class.deck-section--preview]="mode() === 'preview'">
+  <header
+    class="deck-section__head"
+    [class.deck-section__head--selectable]="selectable()"
+    [attr.role]="selectable() ? 'button' : null"
+    [attr.tabindex]="selectable() ? 0 : null"
+    [attr.aria-pressed]="selectable() ? active() : null"
+    (click)="onHeaderClick()"
+    (keydown.enter)="onHeaderClick()"
+    (keydown.space)="onHeaderClick(); $event.preventDefault()">
+    <h3 class="deck-section__title">
+      {{ title() }}
+      @if (selectable() && active()) {
+        <span class="deck-section__badge" aria-hidden="true">ACTIVE</span>
+      }
+    </h3>
+    <span
+      class="deck-section__counter"
+      [class.deck-section__counter--bad]="outOfRange()">
+      {{ counterLabel() }}
+    </span>
+  </header>
+
+  @if (cards().length === 0) {
+    <p class="deck-section__empty">Vide</p>
+  } @else if (mode() === 'preview') {
+    <ul class="deck-section__grid">
+      @for (c of cards(); track c.cardId) {
+        <li
+          class="deck-section__cell deck-section__cell--preview"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'Voir ' + c.snapshot.name"
+          (click)="onSelect(c.cardId)"
+          (keydown.enter)="onSelect(c.cardId)"
+          (keydown.space)="onSelect(c.cardId); $event.preventDefault()">
+          <img
+            class="deck-section__thumb"
+            [src]="c.snapshot.image_url_small"
+            [alt]="c.snapshot.name"
+            loading="lazy" />
+          @if (c.count > 1) {
+            <span class="deck-section__count" aria-hidden="true">×{{ c.count }}</span>
+          }
+        </li>
+      }
+    </ul>
+  } @else {
+    <ul class="deck-section__grid">
+      @for (c of cards(); track c.cardId) {
+        @for (_ of expanded(c); track $index) {
+          <li
+            class="deck-section__cell"
+            tabindex="0"
+            role="button"
+            [attr.aria-label]="'Retirer ' + c.snapshot.name"
+            (click)="onRemove(c.cardId)"
+            (keydown.enter)="onRemove(c.cardId)"
+            (keydown.space)="onRemove(c.cardId); $event.preventDefault()">
+            <img
+              class="deck-section__thumb"
+              [src]="c.snapshot.image_url_small"
+              [alt]="c.snapshot.name"
+              loading="lazy" />
+            <span class="deck-section__remove" aria-hidden="true">−</span>
+          </li>
+        }
+      }
+    </ul>
+  }
+</section>

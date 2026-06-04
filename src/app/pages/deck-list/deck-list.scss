@@ -1,0 +1,133 @@
+.deck-list {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.deck-list__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.deck-list__title {
+  margin: 0;
+  font-size: 2.2rem;
+  color: #faf6ee;
+}
+
+.deck-list__subtitle {
+  margin: 4px 0 0;
+  color: #e83a4a;
+  opacity: 0.8;
+}
+
+.deck-list__create {
+  background: linear-gradient(135deg, #b8232c, #e83a4a);
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(232, 58, 74, 0.3);
+  }
+}
+
+.deck-list__empty {
+  text-align: center;
+  padding: 64px 16px;
+  color: #e83a4a;
+
+  p { margin-bottom: 24px; font-size: 1.1rem; }
+}
+
+.deck-list__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.deck-card {
+  background: rgba(20, 14, 8, 0.7);
+  border: 1px solid rgba(232, 58, 74, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 150ms ease, transform 150ms ease;
+
+  &:hover, &:focus-visible {
+    border-color: #e83a4a;
+    transform: translateY(-2px);
+  }
+}
+
+.deck-card__preview {
+  display: flex;
+  gap: 4px;
+  height: 96px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.deck-card__thumb {
+  width: 64px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.deck-card__preview-empty {
+  font-size: 3rem;
+  color: rgba(232, 58, 74, 0.4);
+}
+
+.deck-card__name {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  color: #faf6ee;
+}
+
+.deck-card__meta {
+  margin: 0 0 12px;
+  color: #e83a4a;
+  opacity: 0.7;
+  font-size: 0.85rem;
+}
+
+.deck-card__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.deck-card__action {
+  flex: 1;
+  background: transparent;
+  border: 1px solid rgba(232, 58, 74, 0.4);
+  color: #e83a4a;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+
+  &:hover { background: rgba(232, 58, 74, 0.1); }
+
+  &--danger:hover {
+    border-color: #b41a2c;
+    color: #b41a2c;
+    background: rgba(180, 26, 44, 0.1);
+  }
+}

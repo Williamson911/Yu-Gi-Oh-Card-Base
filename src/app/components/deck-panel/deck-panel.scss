@@ -1,0 +1,110 @@
+.deck-panel {
+  background: rgba(15, 10, 5, 0.85);
+  border: 1px solid rgba(232, 58, 74, 0.35);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.deck-panel__head {
+  border-bottom: 1px solid rgba(232, 58, 74, 0.2);
+  padding-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.deck-panel__name-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  span {
+    color: #e83a4a;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+}
+
+.deck-panel__name-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(232, 58, 74, 0.6);
+  color: #faf6ee;
+  font-size: 1.2rem;
+  padding: 8px 12px;
+  border-radius: 4px;
+
+  &:focus { outline: 2px solid #e83a4a; outline-offset: 1px; }
+}
+
+.deck-panel__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.deck-panel__btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid rgba(232, 58, 74, 0.4);
+  color: #e83a4a;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 120ms ease, transform 120ms ease;
+
+  &:hover:not(:disabled) { background: rgba(232, 58, 74, 0.1); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  &--primary {
+    background: linear-gradient(135deg, #b8232c, #e83a4a);
+    border-color: transparent;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      background: linear-gradient(135deg, #b8232c, #e83a4a);
+      box-shadow: 0 4px 12px rgba(232, 58, 74, 0.3);
+    }
+  }
+}
+
+.deck-panel__status {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+
+  &--ok {
+    background: rgba(30, 155, 110, 0.15);
+    color: #4cd9a5;
+    border-left: 3px solid #1e9b6e;
+  }
+}
+
+.deck-panel__issues {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.deck-panel__issue {
+  padding: 6px 12px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  background: rgba(232, 58, 74, 0.1);
+  color: #faf6ee;
+  border-left: 3px solid #e83a4a;
+
+  &--error {
+    background: rgba(180, 26, 44, 0.15);
+    color: #ff6b7a;
+    border-left-color: #b41a2c;
+  }
+}

@@ -1,0 +1,71 @@
+.appheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 16px 32px;
+  border-bottom: 1px solid rgba(232, 58, 74, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.appheader__brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.appheader__logo {
+  height: 40px;
+  filter: drop-shadow(0 2px 8px rgba(232, 58, 74, 0.3));
+}
+
+.appheader__nav {
+  display: flex;
+  gap: 24px;
+}
+
+.appheader__link {
+  color: #faf6ee;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: background 150ms ease, color 150ms ease;
+
+  &:hover { background: rgba(232, 58, 74, 0.12); color: #e83a4a; }
+
+  &.is-active {
+    background: rgba(232, 58, 74, 0.2);
+    color: #faf6ee;
+  }
+}
+
+.appheader__sep {
+  color: rgba(232, 58, 74, 0.35);
+  margin: 0 4px;
+}
+
+.appheader__user {
+  color: #faf6ee;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.appheader__logout {
+  background: transparent;
+  border: 1px solid rgba(232, 58, 74, 0.4);
+  color: #e83a4a;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+
+  &:hover {
+    background: rgba(180, 26, 44, 0.15);
+    color: #ff6b7a;
+    border-color: #b41a2c;
+  }
+}

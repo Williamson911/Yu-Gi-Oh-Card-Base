@@ -1,0 +1,62 @@
+<app-header />
+
+<section class="deck-list">
+  <div class="deck-list__head">
+    <div>
+      <h1 class="deck-list__title">Mes decks</h1>
+      <p class="deck-list__subtitle">
+        {{ count() }} deck{{ count() > 1 ? 's' : '' }} sauvegardé{{ count() > 1 ? 's' : '' }}
+      </p>
+    </div>
+    <button type="button" class="deck-list__create" (click)="create()">
+      + Nouveau deck
+    </button>
+  </div>
+
+  @if (count() === 0) {
+    <div class="deck-list__empty">
+      <p>Aucun deck pour l'instant.</p>
+      <button type="button" class="deck-list__create" (click)="create()">
+        + Créer mon premier deck
+      </button>
+    </div>
+  } @else {
+    <ul class="deck-list__grid">
+      @for (d of decks(); track d.id) {
+        <li
+          class="deck-card"
+          tabindex="0"
+          role="button"
+          (click)="open(d)"
+          (keydown.enter)="open(d)">
+          <div class="deck-card__preview">
+            @if (previewThumbs(d).length > 0) {
+              @for (src of previewThumbs(d); track $index) {
+                <img class="deck-card__thumb" [src]="src" alt="" loading="lazy" />
+              }
+            } @else {
+              <span class="deck-card__preview-empty" aria-hidden="true">𓂀</span>
+            }
+          </div>
+          <h2 class="deck-card__name">{{ d.name }}</h2>
+          <p class="deck-card__meta">
+            {{ sizeOf(d) }} carte{{ sizeOf(d) > 1 ? 's' : '' }} ·
+            modifié {{ formatDate(d.updatedAt) }}
+          </p>
+          <div class="deck-card__actions">
+            <button type="button" class="deck-card__action"
+                    (click)="rename(d, $event)"
+                    (keydown)="$event.stopPropagation()">
+              Renommer
+            </button>
+            <button type="button" class="deck-card__action deck-card__action--danger"
+                    (click)="remove(d, $event)"
+                    (keydown)="$event.stopPropagation()">
+              Supprimer
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>

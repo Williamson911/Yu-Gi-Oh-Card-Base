@@ -1,0 +1,75 @@
+<aside class="deck-panel">
+  <div class="deck-panel__head">
+    <label class="deck-panel__name-label">
+      <span>Nom du deck</span>
+      <input
+        class="deck-panel__name-input"
+        type="text"
+        placeholder="Mon deck légendaire"
+        [ngModel]="draft().name"
+        (ngModelChange)="onNameInput($event)"
+        aria-label="Nom du deck" />
+    </label>
+
+    <div class="deck-panel__actions">
+      <button
+        type="button"
+        class="deck-panel__btn deck-panel__btn--primary"
+        [disabled]="!canSave()"
+        (click)="saveRequest.emit()">
+        {{ saveLabel() }}
+      </button>
+      <button
+        type="button"
+        class="deck-panel__btn"
+        (click)="newRequest.emit()">
+        Nouveau
+      </button>
+    </div>
+  </div>
+
+  @if (issues().length === 0) {
+    <p class="deck-panel__status deck-panel__status--ok">✓ Deck valide</p>
+  } @else {
+    <ul class="deck-panel__issues">
+      @for (i of issues(); track $index) {
+        <li
+          class="deck-panel__issue"
+          [class.deck-panel__issue--error]="i.severity === 'error'">
+          {{ i.severity === 'error' ? '⛔' : '⚠' }} {{ i.message }}
+        </li>
+      }
+    </ul>
+  }
+
+  <app-deck-section
+    section="main"
+    title="Main Deck"
+    [cards]="draft().main"
+    [min]="40"
+    [max]="60"
+    [selectable]="true"
+    [active]="activeSection() === 'main'"
+    (removeCard)="onRemove('main', $event)"
+    (headerClick)="sectionSelect.emit('main')" />
+
+  <app-deck-section
+    section="extra"
+    title="Extra Deck"
+    [cards]="draft().extra"
+    [max]="15"
+    [selectable]="true"
+    [active]="activeSection() === 'extra'"
+    (removeCard)="onRemove('extra', $event)"
+    (headerClick)="sectionSelect.emit('extra')" />
+
+  <app-deck-section
+    section="side"
+    title="Side Deck"
+    [cards]="draft().side"
+    [max]="15"
+    [selectable]="true"
+    [active]="activeSection() === 'side'"
+    (removeCard)="onRemove('side', $event)"
+    (headerClick)="sectionSelect.emit('side')" />
+</aside>
